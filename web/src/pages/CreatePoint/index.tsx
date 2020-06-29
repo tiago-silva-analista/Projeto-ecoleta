@@ -46,9 +46,11 @@ const CreatePoint = () => {
     const history = useHistory();
 
     useEffect(() => {
+        console.log('teste1');
         api.get('items')
             .then(response => {
                 setItems(response.data);
+                console.log('teste');
             })
     }, []);
 
