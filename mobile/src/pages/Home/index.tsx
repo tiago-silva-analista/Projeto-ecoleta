@@ -1,14 +1,66 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ImageBackground, View, Image, Text, StyleSheet, } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
-import { Feather as Icon} from '@expo/vector-icons';
-import {useNavigation} from '@react-navigation/native';
+import { Feather as Icon } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import RNPickerSelect from 'react-native-picker-select';
+import axios from 'axios';
 
+interface IBGEUfResponse {
+    sigla: string;
+}
+
+interface ufObject {
+    label: string;
+    value: string
+}
+
+interface IBGECityResponse {
+    nome: string;
+}
+
+interface cityObject {
+    label: string;
+    value: string
+}
+
+interface Params {
+    uf: string;
+    city: string
+}
 const Home = () => {
     const navigation = useNavigation();
-function hangdleNavigateToPoint(){
-    navigation.navigate('Points');
-}
+    const [uf, setUf] = useState<ufObject[]>([]);
+    const [citys, setCitys] = useState<cityObject[]>([]);
+    const [ufSelected, setUfSelected] = useState('0');
+    const [citySelected, setCitySelected] = useState('0');
+
+    function hangdleNavigateToPoint(param:Params) {
+        navigation.navigate('Points', param);
+    }
+
+    useEffect(() => {
+        axios.get<IBGEUfResponse[]>('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
+            .then(response => {
+                const uf = response.data.map(uf => ({ label: uf.sigla, value: uf.sigla } as ufObject));
+
+                setUf(uf);
+            })
+
+    }, [])
+
+    useEffect(() => {
+        if (ufSelected === '0') {
+            return;
+        }
+        axios.get<IBGECityResponse[]>(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${ufSelected}/municipios`)
+            .then(response => {
+                const cityNames = response.data.map(city => ({ label: city.nome, value: city.nome } as cityObject));
+
+                setCitys(cityNames);
+            })
+
+    }, [ufSelected])
 
     return (
         <ImageBackground
@@ -22,9 +74,29 @@ function hangdleNavigateToPoint(){
                 <Text style={styles.description}>Ajudamos pessoas a encontrarem pontos de coleta de forma eficiente.</Text>
             </View>
             <View style={styles.footer}>
+                <RNPickerSelect
+                    placeholder={{
+                        label: 'Select a UF...',
+                        value: null,
+                        color: '#6C6C80',
+                    }}
+                    onValueChange={(value) => setUfSelected(value)}
+                    items={uf}
+                />
+
+                <RNPickerSelect
+                    placeholder={{
+                        label: 'Select a Cidade...',
+                        value: null,
+                        color: '#6C6C80',
+                    }}
+                    onValueChange={(value) => setCitySelected(value)}
+                    items={citys}
+                />
+
                 <RectButton
                     style={styles.button}
-                    onPress={hangdleNavigateToPoint}>
+                    onPress={() => hangdleNavigateToPoint(({uf: ufSelected, city: citySelected} as Params))}>
                     <View style={styles.buttonIcon}>
                         <Text>
                             <Icon name="arrow-right"

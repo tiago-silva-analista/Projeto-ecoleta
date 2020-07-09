@@ -2,11 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, ScrollView, Image, Alert } from 'react-native';
 import Constants from 'expo-constants';
 import { Feather as Icon } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';
 import { SvgUri } from 'react-native-svg';
 import api from './../../services/api';
-import * as Location from 'expo-location'
+import * as Location from 'expo-location';
+
+interface Params{
+    uf: string;
+    city: string;
+}
 
 interface Item {
     id: number;
@@ -28,7 +33,11 @@ const Points = () => {
     const [initialPosition, setInitialPosition] = useState<[number, number]>([0, 0]);
     const [points, setPoints] = useState<Point[]>([]);
     const navigation = useNavigation();
+    const route = useRoute();
 
+    const routeParams = route.params as Params;
+
+    console
     useEffect(() => {
         async function loadPosition() {
             const { status } = await Location.requestPermissionsAsync();
@@ -60,9 +69,9 @@ const Points = () => {
     useEffect(() => {
         api.get('points', {
             params: {
-                city: 'São Paulo',
-                uf: 'SP',
-                items: [1, 2]
+                city: routeParams.city,
+                uf: routeParams.uf,
+                items: selectedItems
             }
         }).then(response => {
             setPoints(response.data);
