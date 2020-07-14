@@ -37,4 +37,6 @@ Finally in the backend, we are using the **NodeJS** and all kind of database tra
 
 ## :movie_camera: Screenshots
   
-![](demo-resize.gif)
+<p align="center">
+  <img src="demo-resize.gif" alt="animated" />
+</p>
