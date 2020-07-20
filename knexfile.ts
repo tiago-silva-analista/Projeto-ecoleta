@@ -3,7 +3,7 @@ import path from 'path';
 
 
 module.exports = {
-    client: 'pg',
+    client: 'sqlite3',
     connection: process.env.DATABASE_URL,
         // host: 'ec2-18-214-119-135.compute-1.amazonaws.com',
         // database: 'd5590fgf39adp7',
