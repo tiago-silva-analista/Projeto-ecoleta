@@ -11,10 +11,10 @@ module.exports = {
         // password: '0b4dcc588a32873f125d19e8fc3d17e983a6b808e96f51542d263aaaf4895556'
     //},
     migrations: {
-        directory: path.resolve(__dirname, 'src', 'database', 'migrations')
+        directory: __dirname +  'src/database/migrations',
     },
     seeds: {
-        directory: path.resolve(__dirname, 'src', 'database', 'seeds')
+        directory: __dirname +'src/database/seeds',
     },
     useNullAsDefault: true,
 }
